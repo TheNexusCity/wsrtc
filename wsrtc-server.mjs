@@ -36,12 +36,14 @@ const _setObjectFromObject = (yObject, object) => {
   }
 };
 const _setDocFromObject = (state, o) => {
+  const worldState = state.getMap('world');
+
   for (const k in o) {
     const v = o[k];
     if (Array.isArray(v)) {
-      _setArrayFromArray(state.getArray(k), v);
+      _setArrayFromArray(worldState.get(k, Z.Array), v);
     } else if (typeof v === 'object') {
-      _setObjectFromObject(state.getMap(k), v);
+      _setObjectFromObject(worldState.get(k, Z.Map), v);
     }
   }
   state.getArray(playersMapName);
@@ -127,7 +129,8 @@ class Room {
   }
   setApps(newApps) {
     this.state.transact(() => {
-      const appsArray = this.state.getArray(appsMapName);
+      const worldState = this.state.getArray('world');
+      const appsArray = worldState.get(appsMapName, Z.Array);
       while (appsArray.length > 0) {
         appsArray.delete(appsArray.length - 1);
       }
